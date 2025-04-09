@@ -48,6 +48,7 @@ def filter_corpus(corpus:list[dict], pattern:str) -> list[dict]:
 
 def get_arxiv_paper(query:str, debug:bool=False) -> list[ArxivPaper]:
     client = arxiv.Client(num_retries=10,delay_seconds=10)
+    print(f"ArXiv query: {query}")
     feed = feedparser.parse(f"https://rss.arxiv.org/atom/{query}")
     if 'Feed error for query' in feed.feed.title:
         raise Exception(f"Invalid ARXIV_QUERY: {query}.")
