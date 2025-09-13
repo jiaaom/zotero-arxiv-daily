@@ -170,7 +170,7 @@ class ArxivPaper:
             if match:
                 conclusion = match.group(0)
         llm = get_llm()
-        prompt = """Given the title, abstract, introduction and the conclusion (if any) of a paper in latex format, generate a one-sentence TLDR summary in __LANG__:
+        prompt = """Given the title, abstract, introduction and the conclusion (if any) of a paper in latex format, generate a brief TLDR summary in __LANG__:
         
         \\title{__TITLE__}
         \\begin{abstract}__ABSTRACT__\\end{abstract}
@@ -193,7 +193,13 @@ class ArxivPaper:
             messages=[
                 {
                     "role": "system",
-                    "content": "You are an assistant who perfectly summarizes scientific paper, and gives the core idea of the paper to the user.",
+                    "content": """You are summarizing academic papers for a researcher. Your responses will be included in an email newsletter recommending recent papers so the tone does not need to be formal, but should still be informative.
+Your goal is not to paraphrase the whole text but to pay attention to:
+- The **core problem** the paper is addressing. 
+- The **main idea or approach** proposed. 
+- The **novelty**: what is new compared to prior work.
+- Why this paper is interesting (optional).
+Keep the answer concise (usually no more than 3 or 4 sentences in total). Put a new line between sentences. Avoid generic summaries or background detail.""",
                 },
                 {"role": "user", "content": prompt},
             ]
@@ -226,7 +232,7 @@ class ArxivPaper:
                 messages=[
                     {
                         "role": "system",
-                        "content": "You are an assistant who perfectly extracts affiliations of authors from the author information of a paper. You should return a python list of affiliations sorted by the author order, like ['TsingHua University','Peking University']. If an affiliation is consisted of multi-level affiliations, like 'Department of Computer Science, TsingHua University', you should return the top-level affiliation 'TsingHua University' only. Do not contain duplicated affiliations. If there is no affiliation found, you should return an empty list [ ]. You should only return the final list of affiliations, and do not return any intermediate results.",
+                        "content": "You are an assistant who perfectly extracts affiliations of authors from the author information of a paper. Because the output will be directly read by Python, you should return a python list of affiliations sorted by the author order, like ['TsingHua University','Peking University']. If an affiliation is consisted of multi-level affiliations, like 'Department of Computer Science, TsingHua University', you should return the top-level affiliation 'TsingHua University' only. Do not contain duplicated affiliations. If there is no affiliation found, you should return an empty list [ ]. You should only return the final list of affiliations, and do not return any intermediate results.",
                     },
                     {"role": "user", "content": prompt},
                 ]

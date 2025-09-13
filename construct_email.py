@@ -107,7 +107,7 @@ def get_stars(score:float):
     low = 6
     high = 8
     if score <= low:
-        return ''
+        return '<div class="star-wrapper">' + half_star + '</div>'
     elif score >= high:
         return full_star * 5
     else:
@@ -115,6 +115,9 @@ def get_stars(score:float):
         star_num = math.ceil((score-low) / interval)
         full_star_num = int(star_num/2)
         half_star_num = star_num - full_star_num * 2
+        # Ensure at least half star is shown
+        if full_star_num == 0 and half_star_num == 0:
+            half_star_num = 1
         return '<div class="star-wrapper">'+full_star * full_star_num + half_star * half_star_num + '</div>'
 
 

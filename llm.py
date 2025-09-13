@@ -3,6 +3,8 @@ from openai import OpenAI
 from loguru import logger
 from time import sleep
 
+from sympy import Q
+
 GLOBAL_LLM = None
 
 class LLM:
@@ -20,21 +22,28 @@ class LLM:
         self.model = model
         self.lang = lang
 
-    def generate(self, messages: list[dict]) -> str:
+    def generate(self, messages: list[dict], debug=True) -> str:
         if isinstance(self.llm, OpenAI):
             max_retries = 3
+            if debug:
+                print("Messages:")
+                print(messages)
             for attempt in range(max_retries):
                 try:
-                    response = self.llm.chat.completions.create(messages=messages, temperature=0, model=self.model)
+                    response = self.llm.chat.completions.create(messages=messages, temperature=0.5, model=self.model)
                     break
                 except Exception as e:
                     logger.error(f"Attempt {attempt + 1} failed: {e}")
                     if attempt == max_retries - 1:
                         raise
                     sleep(3)
-            return response.choices[0].message.content
+            content = response.choices[0].message.content
+            if debug:
+                print("Response:")
+                print(content)
+            return content
         else:
-            response = self.llm.create_chat_completion(messages=messages,temperature=0)
+            response = self.llm.create_chat_completion(messages=messages,temperature=0.5)
             return response["choices"][0]["message"]["content"]
 
 def set_global_llm(api_key: str = None, base_url: str = None, model: str = None, lang: str = "English"):
